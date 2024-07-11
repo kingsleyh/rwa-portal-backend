@@ -1,0 +1,9 @@
+RUST_LOG=info
+APP_SERVICE_HOST=0.0.0.0
+DATABASE_URL=postgres://portal_api_service_user:mpassword@host.docker.internal:54319/rwa-pg-local
+APP_STRIPE_APIKEY=sk_test_xxxxx
+APP_MOESIF_MANAGEMENTTOKEN=xxxxx
+APP_MOESIF_APPLICATIONID=xxxxx
+APP_TYK_SECRETKEY=foo
+APP_TYK_GATEWAYURL=http://tyk-gateway:8080
+APP_AUTH0_KEYS=xxxxx
