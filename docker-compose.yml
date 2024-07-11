@@ -1,0 +1,55 @@
+version: '3.3'
+services:
+  tyk-gateway:
+    image: docker.tyk.io/tyk-gateway/tyk-gateway:v5.2.4
+    platform: linux/amd64
+    ports:
+      - 8080:8080
+    networks:
+      - rwa
+    volumes:
+      - ./tyk-config/tyk.conf:/opt/tyk-gateway/tyk.conf
+      - ./tyk-config/apps:/opt/tyk-gateway/apps
+      - ./tyk-config/policies.json:/opt/tyk-gateway/policies/policies.json
+    env_file: ./app-config/tyk-gateway
+    depends_on:
+      - tyk-redis
+      - tyk-plugin-server
+      - portal-api-service
+  tyk-redis:
+    image: redis:6.2.7-alpine
+    networks:
+      - rwa
+  tyk-plugin-server:
+    image: kingsleyh/tyk-plugin-server
+    platform: linux/amd64
+    networks:
+      - rwa
+  portal-api-service:
+    image: kingsleyh/portal-api-service
+    platform: linux/amd64
+    networks:
+      - rwa
+    env_file: ./app-config/portal-api-service
+    depends_on:
+      - rwa-pg-database
+  rwa-pg-database:
+    image: "postgres:15.0"
+    restart: "always"
+    volumes:
+      - "./db/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "rwa-pg-database-local-data:/var/lib/postgresql/rwa-pg-database"
+    ports:
+      - "54319:5432"
+    networks:
+      - rwa   
+    environment:
+      POSTGRES_USER: "testuser"
+      POSTGRES_PASSWORD: "mpassword"
+      POSTGRES_DB: "rwa-pg-local"
+    mem_limit: "8g"
+
+volumes:
+  rwa-pg-database-local-data:
+networks:
+  rwa:    
